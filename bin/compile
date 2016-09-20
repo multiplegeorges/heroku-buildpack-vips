@@ -28,20 +28,15 @@ temp_app_dir="/app/vendor/vips"
 mkdir -p $output_dir
 mkdir -p $temp_app_dir
 
-echo "Downloading libvips and unpacking" | indent
-curl -s https://s3.amazonaws.com/shoebox-vips/vips.tar.gz | tar xz -C $output_dir
+echo "Unpacking libvips" | indent
+tar -C $output_dir -xzf ${BP_DIR}/vips.tar.gz
+tar -C $temp_app_dir -xzf ${BP_DIR}/vips.tar.gz
 
 if [ $? != 0 ]; then
-  echo "Error downloading vips and unpacking to build dir" | indent
+  echo "Error unpacking to build dir" | indent
   exit 1
 fi
 
-curl -s https://s3.amazonaws.com/shoebox-vips/vips.tar.gz | tar xz -C $temp_app_dir
-
-if [ $? != 0 ]; then
-  echo "Error downloading vips and unpacking to app dir" | indent
-  exit 1
-fi
 mkdir -p $BUILD_DIR/bin/
 cp -r $output_dir/bin/* $BUILD_DIR/bin/
 
