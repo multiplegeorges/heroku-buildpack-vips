@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set vips version
-export VIPS_VERSION=8.2.3
+export VIPS_VERSION=8.3.3
 export WEBP_VERSION=0.5.1
 export ORC_VERSION=0.4.25
 export FFTW_VERSION=3.3.5
@@ -50,7 +50,7 @@ tar -xvf libwebp.tar.gz
 # Get into webp folder
 cd libwebp-$WEBP_VERSION
 # Configure build
-./configure --prefix $OUT_PATH
+./configure --prefix $OUT_PATH --enable-libwebpmux
 # Make libwebp
 make
 # Install webp
@@ -277,17 +277,41 @@ make install
 cd $BUILD_PATH
 
 ###############
+#     NASM    #
+###############
+
+curl -L http://www.nasm.us/pub/nasm/releasebuilds/2.12.02/nasm-2.12.02.tar.xz -o nasm.tar.xz
+tar -xvf nasm.tar.xz
+cd nasm-2.12.02
+./configure --prefix $OUT_PATH
+make
+make install
+cd $BUILD_PATH
+
+###############
+#  JPEG Turbo #
+###############
+
+curl -L http://heanet.dl.sourceforge.net/project/libjpeg-turbo/1.5.0/libjpeg-turbo-1.5.0.tar.gz -o libjpeg-turbo.tar.gz
+tar -xvf libjpeg-turbo.tar.gz
+cd libjpeg-turbo-1.5.0
+./configure --prefix $OUT_PATH
+make
+make install
+cd $BUILD_PATH
+
+###############
 #     VIPS    #
 ###############
 
 # Download vips runtime
-curl http://www.vips.ecs.soton.ac.uk/supported/8.2/vips-$VIPS_VERSION.tar.gz -o vips.tar.gz
+curl http://www.vips.ecs.soton.ac.uk/supported/8.3/vips-$VIPS_VERSION.tar.gz -o vips.tar.gz
 # Unzip
 tar -xvf vips.tar.gz
 # Get into vips folder
 cd vips-$VIPS_VERSION
 # Configure build and output everything in /tmp/vips
-./configure --prefix $OUT_PATH --without-magick
+./configure --prefix $OUT_PATH --without-magick --with-jpeg-libraries=$OUT_PATH/lib --with-jpeg-includes=$OUT_PATH/include
 # Make
 make
 # install vips
